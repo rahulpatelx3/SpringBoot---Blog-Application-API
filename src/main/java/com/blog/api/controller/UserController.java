@@ -1,16 +1,10 @@
 package com.blog.api.controller;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.blog.api.payload.APIResponse;
 import com.blog.api.payload.UserDto;
 import com.blog.api.service.Impl.UserServiceImpl;
