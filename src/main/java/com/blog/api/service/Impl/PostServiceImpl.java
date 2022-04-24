@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import com.blog.api.entity.*;
 import com.blog.api.exceptions.ResourceNotFoundException;
@@ -76,31 +77,98 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<PostDto> getAllPostByCategory(Integer categoryId) {
+	public PostResponse getAllPostByCategory(Integer categoryId,Integer pageSize,Integer pageNumber,String sortBy,String sortDirection) {
+		
+		Sort sort=null;
+		if(sortDirection.equalsIgnoreCase("Asc")) {
+			sort=Sort.by(sortBy).ascending();
+		}
+		else {
+			sort=Sort.by(sortBy).descending();
+		}
+		
+		Pageable pageable=PageRequest.of(pageNumber, pageSize, sort);
+		
 		Category category=this.categoryRepo.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","Category Id",categoryId));
-		List<Post> posts=this.postRepo.findByCategory(category);
-		List<PostDto> listDto=posts.stream().map((post)-> 
+		
+		Page<Post> posts=this.postRepo.findByCategory(category,pageable);
+		
+		List<PostDto> listDtos=posts.stream().map((post)-> 
 			postToDto(post)
 			).collect(Collectors.toList());
-		return listDto;
+		
+		PostResponse postResponse=new PostResponse();
+		postResponse.setContent(listDtos);
+		postResponse.setPageNumber(posts.getNumber());
+		postResponse.setPageSize(posts.getSize());
+		postResponse.setTotalElement(posts.getTotalElements());
+		postResponse.setTotalPage(posts.getTotalPages());
+		postResponse.setLastPage(posts.isLast());
+		return postResponse;
 	}
 
 	@Override
-	public List<PostDto> getAllPostByUser(Integer userId) {
+	public PostResponse getAllPostByUser(Integer userId,Integer pageSize,Integer pageNumber,String sortBy,String sortDirection) {
+		
+		Sort sort=null;
+		if(sortDirection.equalsIgnoreCase("Asc")) {
+			sort=Sort.by(sortBy).ascending();
+		}
+		else {
+			sort=Sort.by(sortBy).descending();
+		}
+		
+		Pageable pageable=PageRequest.of(pageNumber, pageSize, sort);
+		
 		User user=this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User","User Id",userId));
-		List<Post> posts=this.postRepo.findByUser(user);
-		List<PostDto> listDto=posts.stream().map((post)-> 
+		
+		Page<Post> posts=this.postRepo.findByUser(user,pageable);
+		
+		List<PostDto> listDtos=posts.stream().map((post)-> 
 			postToDto(post)
 			).collect(Collectors.toList());
-		return listDto;
+		
+		PostResponse postResponse=new PostResponse();
+		postResponse.setContent(listDtos);
+		postResponse.setPageNumber(posts.getNumber());
+		postResponse.setPageSize(posts.getSize());
+		postResponse.setTotalElement(posts.getTotalElements());
+		postResponse.setTotalPage(posts.getTotalPages());
+		postResponse.setLastPage(posts.isLast());
+		return postResponse;
 	}
 
 	@Override
-	public List<PostDto> getAllPost() {
-		List<Post> posts=this.postRepo.findAll();
+	public PostResponse getAllPost(Integer pageSize,Integer pageNumber,String sortBy,String sortDirection) {
+		Sort sort=null;
+		if(sortDirection.equalsIgnoreCase("Asc")) {
+			sort=Sort.by(sortBy).ascending();
+		}
+		else {
+			sort=Sort.by(sortBy).descending();
+		}
+		Pageable pageable=PageRequest.of(pageNumber, pageSize, sort);
+		Page<Post> page=this.postRepo.findAll(pageable);
+		
+		List<Post> posts=page.getContent();
+		
 		List<PostDto> listDtos=posts.stream().map((post)->
 			postToDto(post)
 			).collect(Collectors.toList());
-		return listDtos;
+		
+		PostResponse postResponse=new PostResponse();
+		postResponse.setContent(listDtos);
+		postResponse.setPageNumber(page.getNumber());
+		postResponse.setPageSize(page.getSize());
+		postResponse.setTotalElement(page.getTotalElements());
+		postResponse.setTotalPage(page.getTotalPages());
+		postResponse.setLastPage(page.isLast());
+		return postResponse;
+	}
+
+	@Override
+	public List<PostDto> searchPost(String keyword) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

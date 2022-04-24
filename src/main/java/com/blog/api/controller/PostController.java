@@ -1,21 +1,12 @@
 package com.blog.api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import com.blog.api.payload.APIResponse;
 import com.blog.api.payload.PostDto;
+import com.blog.api.payload.PostResponse;
 import com.blog.api.service.Impl.PostServiceImpl;
 
 @RestController
@@ -41,21 +32,34 @@ public class PostController {
 	}
 	
 	@GetMapping("/user/{userId}/post")
-	public ResponseEntity<List<PostDto>> getPostByUser(@PathVariable Integer userId){
-		List<PostDto> listDtos=this.postService.getAllPostByUser(userId);
-		return new ResponseEntity<List<PostDto>>(listDtos,HttpStatus.OK);
+	public ResponseEntity<PostResponse> getPostByUser(@PathVariable Integer userId,
+			@RequestParam(value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+			@RequestParam(value = "pageSize",defaultValue = "10",required = false) Integer pageSize,
+			@RequestParam(value = "sortBy",defaultValue = "postId",required = false) String sortBy,
+			@RequestParam(value = "sortDirection",defaultValue = "postId",required = false) String sortDirection){
+		PostResponse postResponse=this.postService.getAllPostByUser(userId,pageSize,pageNumber,sortBy,sortDirection);
+		return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
 	}
 	
 	@GetMapping("/category/{categoryId}/post")
-	public ResponseEntity<List<PostDto>> getPostByCategory(@PathVariable Integer categoryId){
-		List<PostDto> listDtos=this.postService.getAllPostByCategory(categoryId);
-		return new ResponseEntity<List<PostDto>>(listDtos,HttpStatus.OK);
+	public ResponseEntity<PostResponse> getPostByCategory(@PathVariable Integer categoryId,
+			@RequestParam(value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+			@RequestParam(value = "pageSize",defaultValue = "10",required = false) Integer pageSize,
+			@RequestParam(value = "sortBy",defaultValue = "postId",required = false) String sortBy,
+			@RequestParam(value = "sortDirection",defaultValue = "postId",required = false) String sortDirection){
+		PostResponse postResponse=this.postService.getAllPostByCategory(categoryId,pageSize,pageNumber,sortBy,sortDirection);
+		return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
 	}
 	
 	@GetMapping("/post")
-	public ResponseEntity<List<PostDto>> getAllPost(){
-		List<PostDto> listDtos=this.postService.getAllPost();
-		return new ResponseEntity<List<PostDto>>(listDtos,HttpStatus.OK);
+	public ResponseEntity<PostResponse> getAllPost(
+			@RequestParam(value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+			@RequestParam(value = "pageSize",defaultValue = "10",required = false) Integer pageSize,
+			@RequestParam(value = "sortBy",defaultValue = "postId",required = false) String sortBy,
+			@RequestParam(value = "sortDirection",defaultValue = "postId",required = false) String sortDirection){
+		
+		PostResponse postResponse=this.postService.getAllPost(pageSize,pageNumber,sortBy,sortDirection);
+		return new ResponseEntity<PostResponse>(postResponse,HttpStatus.OK);
 	}
 	
 	@GetMapping("/post/{postId}")
