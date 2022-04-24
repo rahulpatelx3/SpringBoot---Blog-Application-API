@@ -39,7 +39,6 @@ public class PostServiceImpl implements PostService {
 	public PostDto createPost(PostDto postDto,Integer userId,Integer categoryId) {
 		User user=this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User","User Id",userId));
 		Category category=this.categoryRepo.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","Category Id",categoryId));
-		
 		Post post=dtoToPost(postDto);
 		post.setImageName("image.png");
 		post.setAddedDate(new Date());
@@ -51,14 +50,23 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public PostDto updatePost(PostDto postDto, Integer postId) {
-		// TODO Auto-generated method stub
-		return null;
+		Post post=this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","Post Id",postId));
+		post.setTitle(postDto.getTitle());
+		post.setContent(postDto.getContent());
+		post.setImageName(postDto.getImageName());
+		Post updatePost=this.postRepo.save(post);
+		return postToDto(updatePost);
 	}
 
 	@Override
 	public void deletePost(Integer postId) {
 		Post post=this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","Post Id",postId));
 		this.postRepo.delete(post);
+	}
+	
+	@Override
+	public void deleteAllPost() {
+		this.postRepo.deleteAll();
 	}
 
 	@Override

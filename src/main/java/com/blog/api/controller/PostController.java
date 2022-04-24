@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,13 @@ public class PostController {
 												@PathVariable Integer userId,
 												@PathVariable Integer categoryId){
 		PostDto createPost=this.postService.createPost(postDto, userId, categoryId);
+		return new ResponseEntity<PostDto>(createPost,HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/post/{postId}")
+	public ResponseEntity<PostDto> upatePost(@RequestBody PostDto postDto,
+												@PathVariable Integer postId){
+		PostDto createPost=this.postService.updatePost(postDto, postId);
 		return new ResponseEntity<PostDto>(createPost,HttpStatus.CREATED);
 	}
 	
@@ -58,6 +66,13 @@ public class PostController {
 	
 	@DeleteMapping("/post/{postId}")
 	public ResponseEntity<APIResponse> deletePostById(@PathVariable Integer postId){
+		this.postService.deletePost(postId);
 		return new ResponseEntity<APIResponse>(new APIResponse("post deleted", true),HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/post/all")
+	public ResponseEntity<APIResponse> deleteAllPost(){
+		this.postService.deleteAllPost();
+		return new ResponseEntity<APIResponse>(new APIResponse("All post deleted", true),HttpStatus.OK);
 	}
 }

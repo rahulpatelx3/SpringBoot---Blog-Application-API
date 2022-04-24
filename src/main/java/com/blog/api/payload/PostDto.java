@@ -8,6 +8,7 @@ import com.blog.api.entity.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDto {
+	private int postId;
 	private String title;
 	private String content;
 	private String imageName;
