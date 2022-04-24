@@ -30,8 +30,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto updateUser(UserDto userDto, Integer id) {
-		User user=this.userRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User"," id ",id));
+	public UserDto updateUser(UserDto userDto, Integer userId) {
+		User user=this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User"," id ",userId));
 		user.setName(userDto.getName());
 		user.setEmail(userDto.getEmail());
 		user.setPassword(userDto.getPassword());
@@ -41,14 +41,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteUser(Integer id) {
-		User user=this.userRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User"," id ",id));
+	public void deleteUser(Integer userId) {
+		User user=this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User"," id ",userId));
 		this.userRepo.delete(user);
 	}
 
 	@Override
-	public UserDto getUserById(Integer id) {
-		User user=this.userRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("User"," id ",id));
+	public UserDto getUserById(Integer userId) {
+		User user=this.userRepo.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User"," id ",userId));
 		return this.userToUserDto(user);
 	}
 
