@@ -8,6 +8,7 @@ import com.blog.api.payload.APIResponse;
 import com.blog.api.payload.PostDto;
 import com.blog.api.payload.PostResponse;
 import com.blog.api.service.Impl.PostServiceImpl;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/")
@@ -78,5 +79,11 @@ public class PostController {
 	public ResponseEntity<APIResponse> deleteAllPost(){
 		this.postService.deleteAllPost();
 		return new ResponseEntity<APIResponse>(new APIResponse("All post deleted", true),HttpStatus.OK);
+	}
+	
+	@GetMapping("post/search/{keyword}")
+	public ResponseEntity<List<PostDto>> searchByTitle(@PathVariable String keyword){
+		List<PostDto> postDto=this.postService.searchPost(keyword);
+		return new ResponseEntity<List<PostDto>>(postDto,HttpStatus.OK);
 	}
 }
