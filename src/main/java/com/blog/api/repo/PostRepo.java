@@ -13,5 +13,5 @@ public interface PostRepo extends JpaRepository<Post, Integer> {
 	Page<Post> findByCategory(Category category,Pageable pageable);
 	
 	@Query("select p from Post p where p.title like :key")
-	List<Post> searchByTitle(@Param("key") String keyword);
+	List<Post> searchByTitle(@Param("key") String keyword);           
 }
