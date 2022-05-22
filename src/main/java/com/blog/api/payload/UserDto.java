@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class UserDto {
 	
-	private int userId;
+	private Integer userId;
 	
 	@NotEmpty
 	@Size(min = 4,max = 20,message = "user name must have min 4 char and max 20 char")

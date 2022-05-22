@@ -24,8 +24,8 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public CategoryDto createCategory(CategoryDto categoryDto) {
-		Category category=this.categoryRepo.save(dtoTocategory(categoryDto));
-		return categoryToDto(category);
+		Category category=this.categoryRepo.save(this.modelMapper.map(categoryDto, Category.class));
+		return this.modelMapper.map(category, CategoryDto.class);
 	}
 
 	@Override
@@ -33,8 +33,8 @@ public class CategoryServiceImpl implements CategoryService {
 		Category category=this.categoryRepo.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","Category Id",categoryId));
 		category.setCategoryTitle(categoryDto.getCategoryTitle());
 		category.setCategoryDescription(categoryDto.getCategoryDescription());
-		this.categoryRepo.save(category);
-		return categoryToDto(category);
+		Category updatedCategory = this.categoryRepo.save(category);
+		return this.modelMapper.map(updatedCategory, CategoryDto.class);
 	}
 
 	@Override
@@ -46,24 +46,16 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public CategoryDto getCategoryById(Integer categoryId) {
 		Category category=this.categoryRepo.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","Category Id",categoryId));
-		return categoryToDto(category);
+		return this.modelMapper.map(category, CategoryDto.class);
 	}
 
 	@Override
 	public List<CategoryDto> getAllCategory() {
 		List<Category> list=this.categoryRepo.findAll();
 		List<CategoryDto> listDto=list.stream().map((category)->
-			categoryToDto(category)
+		this.modelMapper.map(category, CategoryDto.class)
 		).collect(Collectors.toList());
 		return listDto;
-	}
-	
-	private CategoryDto categoryToDto(Category category) {
-		return this.modelMapper.map(category, CategoryDto.class);
-	}
-	
-	private Category dtoTocategory(CategoryDto categoryDto) {
-		return this.modelMapper.map(categoryDto, Category.class);
 	}
 	
 }

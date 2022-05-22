@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryDto {
-	private int categoryId;
+	private Integer categoryId;
 	
 	@NotBlank
 	@Size(min = 4,max = 10,message = "Title size shouls be between 4 to 10")

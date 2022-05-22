@@ -27,26 +27,19 @@ public class PostServiceImpl implements PostService {
 	
 	@Autowired
 	private ModelMapper modelMapper;
-
-	private Post dtoToPost(PostDto postDto){
-		return this.modelMapper.map(postDto, Post.class);
-	}
 	
-	private PostDto postToDto(Post post){
-		return this.modelMapper.map(post, PostDto.class);
-	}
 	
 	@Override
 	public PostDto createPost(PostDto postDto,Integer userId,Integer categoryId) {
 		User user=this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User","User Id",userId));
 		Category category=this.categoryRepo.findById(categoryId).orElseThrow(()->new ResourceNotFoundException("Category","Category Id",categoryId));
-		Post post=dtoToPost(postDto);
+		Post post=this.modelMapper.map(postDto, Post.class);
 		post.setImageName("image.png");
 		post.setAddedDate(new Date());
 		post.setCategory(category);
 		post.setUser(user);
 		Post newPost=this.postRepo.save(post);
-		return postToDto(newPost);
+		return this.modelMapper.map(newPost,PostDto.class);
 	}
 
 	@Override
@@ -56,7 +49,7 @@ public class PostServiceImpl implements PostService {
 		post.setContent(postDto.getContent());
 		post.setImageName(postDto.getImageName());
 		Post updatePost=this.postRepo.save(post);
-		return postToDto(updatePost);
+		return this.modelMapper.map(updatePost,PostDto.class);
 	}
 
 	@Override
@@ -73,11 +66,12 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PostDto getPostById(Integer postId) {
 		Post post=this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post","Post Id",postId));
-		return postToDto(post);
+		return this.modelMapper.map(post,PostDto.class);
 	}
 
 	@Override
-	public PostResponse getAllPostByCategory(Integer categoryId,Integer pageSize,Integer pageNumber,String sortBy,String sortDirection) {
+	public PostResponse getAllPostByCategory(Integer categoryId,Integer pageSize,
+			Integer pageNumber,String sortBy,String sortDirection) {
 		
 		Sort sort=null;
 		if(sortDirection.equalsIgnoreCase("Asc")) {
@@ -94,7 +88,7 @@ public class PostServiceImpl implements PostService {
 		Page<Post> posts=this.postRepo.findByCategory(category,pageable);
 		
 		List<PostDto> listDtos=posts.stream().map((post)-> 
-			postToDto(post)
+			this.modelMapper.map(post,PostDto.class)
 			).collect(Collectors.toList());
 		
 		PostResponse postResponse=new PostResponse();
@@ -125,7 +119,7 @@ public class PostServiceImpl implements PostService {
 		Page<Post> posts=this.postRepo.findByUser(user,pageable);
 		
 		List<PostDto> listDtos=posts.stream().map((post)-> 
-			postToDto(post)
+			this.modelMapper.map(post,PostDto.class)
 			).collect(Collectors.toList());
 		
 		PostResponse postResponse=new PostResponse();
@@ -153,7 +147,7 @@ public class PostServiceImpl implements PostService {
 		List<Post> posts=page.getContent();
 		
 		List<PostDto> listDtos=posts.stream().map((post)->
-			postToDto(post)
+			this.modelMapper.map(post,PostDto.class)
 			).collect(Collectors.toList());
 		
 		PostResponse postResponse=new PostResponse();
@@ -170,7 +164,7 @@ public class PostServiceImpl implements PostService {
 	public List<PostDto> searchPost(String keyword) {
 		List<Post> posts=this.postRepo.searchByTitle("%"+keyword+"%");
 		List<PostDto> postDto=posts.stream().map((post)->
-			this.postToDto(post)
+			this.modelMapper.map(post,PostDto.class)
 			).collect(Collectors.toList());
 		return postDto;
 	}
